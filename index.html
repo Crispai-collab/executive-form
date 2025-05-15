@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Executive Alignment Scorecard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .rating-label {
+      position: relative;
+    }
+    .rating-label:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      margin-bottom: 5px;
+    }
+    input[type="radio"]:checked + label {
+      background-color: #e10098;
+      border-color: #e10098;
+      color: white;
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+  <div class="flex justify-center py-10 px-4">
+    <div class="w-full max-w-2xl bg-white p-8 rounded-xl shadow-lg border border-gray-100" id="scorecard-container">
+      
+      <!-- Logo + Title -->
+      <div class="mb-8 text-left">
+        <div class="flex mb-4">
+          <div>
+            <img src="./ChatGPT Image May 13, 2025, 04_14_19 PM.png" alt="DDL Logo" style="width: 480px; height: 280px;" />
+          </div>
+          
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-1">Executive Alignment Scorecard</h1>
+      </div>
+
+      <!-- Introduction -->
+      <div class="bg-pink-50 border-l-4 border-pink-500 p-4 rounded-r-lg mb-8">
+        <p class="text-gray-700 text-sm">
+          Misalignment at the top slows everything down. This quick yet powerful diagnostic helps you surface subtle signs of misalignment across five domains—so you can lead your team with clarity, unity, and speed.
+        </p>
+      </div>
+
+      <!-- Form -->
+      <form id="scorecardForm" class="space-y-8">
+        <!-- Questions inserted by JS -->
+      </form>
+
+      <!-- User Info Form (hidden initially) -->
+      <form id="userInfoForm" class="space-y-6 hidden fade-in">
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <h3 class="font-semibold text-blue-700 mb-2">Almost done!</h3>
+          <p class="text-sm text-blue-600">Please provide some basic information to complete your assessment.</p>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">Name*</label>
+            <input type="text" id="userName" name="userName" required 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" 
+                   placeholder="Enter your full name">
+          </div>
+          <div>
+            <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-1">Email*</label>
+            <input type="email" id="userEmail" name="userEmail" required 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" 
+                   placeholder="Enter your email address">
+          </div>
+          <div>
+            <label for="userOrganization" class="block text-sm font-medium text-gray-700 mb-1">Organization</label>
+            <input type="text" id="userOrganization" name="userOrganization" 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" 
+                   placeholder="Where you work (optional)">
+          </div>
+          <div>
+            <label for="userRole" class="block text-sm font-medium text-gray-700 mb-1">Role/Title</label>
+            <input type="text" id="userRole" name="userRole" 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" 
+                   placeholder="Your position (optional)">
+          </div>
+        </div>
+        
+        <button type="submit" class="w-full bg-pink-600 text-white py-3 px-4 rounded-lg hover:bg-pink-700 transition shadow-md font-medium">
+          Submit My Responses
+        </button>
+      </form>
+      
+      <!-- Results Section (hidden initially) -->
+      <div id="results" class="hidden mt-8 space-y-6 fade-in">
+        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+          <h3 class="font-semibold text-green-700 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            Thank you for completing the assessment!
+          </h3>
+          
+          <p class="text-sm text-green-600 mt-1">Your results are ready below.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <h3 class="font-bold text-gray-800 mb-2">Your Alignment Score</h3>
+            <p id="totalScore" class="text-2xl font-bold text-pink-600">0 / 50</p>
+            <p id="percentageScore" class="text-sm text-gray-600"></p>
+          </div>
+          <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <h3 class="font-bold text-gray-800 mb-2">Assessment Date</h3>
+            <p id="assessmentDate" class="text-xl font-medium text-gray-700"></p>
+          </div>
+        </div>
+         <!-- Scoring Guide -->
+      <div id= "scoringGuide"class="bg-gray-50 p-4 rounded-lg mb-8 border border-gray-200">
+        <h3 class="font-semibold text-gray-700 mb-2 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+          </svg>
+          Scoring Guide
+        </h3>
+        <ul class="text-sm text-gray-600 space-y-1">
+          <li class="flex"><span class="font-medium text-pink-600 w-16">40–50:</span> High-performing team in sync</li>
+          <li class="flex"><span class="font-medium text-pink-600 w-16">30–39:</span> Partially aligned</li>
+          <li class="flex"><span class="font-medium text-pink-600 w-16">20–29:</span> Functional but fractured</li>
+          <li class="flex"><span class="font-medium text-pink-600 w-16">Under 20:</span> Consider team reset</li>
+        </ul>
+      </div>
+        
+        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+          <h3 class="font-bold text-gray-800 text-lg mb-3">Interpretation</h3>
+          <div id="interpretation" class="space-y-4 text-sm text-gray-700"></div>
+        </div>
+
+        <!-- Consultation Button Section -->
+        <div class="bg-pink-50 p-6 rounded-lg border border-pink-200 text-center">
+          <p class="text-gray-700 mb-4 font-medium">Want to explore your team's score together?</p>
+          <button class="bg-pink-600 text-white py-3 px-6 rounded-lg hover:bg-pink-700 transition shadow-md font-medium">
+            Book a complimentary 30-minute Executive Alignment Session
+          </button>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button id="downloadBtn" class="flex-1 bg-white border border-pink-600 text-pink-600 py-2 px-4 rounded-lg hover:bg-pink-50 transition shadow font-medium flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+            Download My Results
+          </button>
+          <button id="restartBtn" class="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition shadow font-medium">
+            Start Over
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { jsPDF } = window.jspdf;
+    
+    const questions = [
+      "Our executive team has a clearly articulated, shared purpose that goes beyond individual portfolios.",
+      "We regularly reconnect our daily work to the bigger vision we've committed to.",
+      "We have consistent decision-making processes that are understood and respected by all members.",
+      "Decisions are made at the right level, with clarity on who owns what.",
+      "Difficult issues are discussed openly without fear of political fallout.",
+      "There's a deep level of psychological safety—we challenge and support each other.",
+      "Our team sees the whole system—we think beyond our individual departments.",
+      "We consistently collaborate across functions to solve enterprise-wide challenges.",
+      "Once we commit to something as a team, it gets followed through consistently.",
+      "We hold each other accountable without needing top-down enforcement."
+    ];
+
+    // Render the questions
+    const renderQuestions = () => {
+      const form = document.getElementById("scorecardForm");
+      form.innerHTML = '';
+      
+      const questionsDiv = document.createElement("div");
+      questionsDiv.className = "space-y-6";
+
+      questions.forEach((question, index) => {
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "space-y-3";
+
+        const label = document.createElement("label");
+        label.className = "block text-sm font-medium text-gray-700";
+        label.textContent = `${index + 1}. ${question}`;
+        questionDiv.appendChild(label);
+
+        const ratingDiv = document.createElement("div");
+        ratingDiv.className = "flex gap-2";
+
+        for (let i = 1; i <= 5; i++) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "relative";
+
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = `q${index + 1}`;
+          input.value = i;
+          input.id = `q${index + 1}-${i}`;
+          input.className = "hidden";
+
+          const labelBtn = document.createElement("label");
+          labelBtn.setAttribute("for", input.id);
+          labelBtn.className = `
+            w-10 h-10 rounded-full border border-gray-300 text-gray-600
+            flex items-center justify-center text-sm cursor-pointer
+            hover:bg-pink-50 transition
+          `;
+          labelBtn.textContent = i;
+          labelBtn.dataset.tooltip = i === 1 ? "Strongly disagree" : 
+                                    i === 3 ? "Neutral" : 
+                                    i === 5 ? "Strongly agree" : "";
+
+          // Add click handler to manage styling
+          labelBtn.addEventListener('click', function() {
+            // Remove selected styles from all buttons in this group
+            ratingDiv.querySelectorAll('label').forEach(l => {
+              l.classList.remove('bg-pink-600', 'border-pink-600', 'text-white');
+            });
+            // Add selected style to clicked button
+            this.classList.add('bg-pink-600', 'border-pink-600', 'text-white');
+          });
+
+          input.addEventListener('change', function() {
+            if (this.checked) {
+              // Remove selected styles from all buttons in this group
+              ratingDiv.querySelectorAll('label').forEach(l => {
+                l.classList.remove('bg-pink-600', 'border-pink-600', 'text-white');
+              });
+              // Add selected style to corresponding label
+              labelBtn.classList.add('bg-pink-600', 'border-pink-600', 'text-white');
+            }
+          });
+
+          wrapper.appendChild(input);
+          wrapper.appendChild(labelBtn);
+          ratingDiv.appendChild(wrapper);
+        }
+
+        questionDiv.appendChild(ratingDiv);
+        questionsDiv.appendChild(questionDiv);
+      });
+
+      form.appendChild(questionsDiv);
+
+      // Add submit button
+      const submitDiv = document.createElement("div");
+      submitDiv.className = "pt-4";
+      
+      const submitBtn = document.createElement("button");
+      submitBtn.type = "submit";
+      submitBtn.textContent = "Calculate My Alignment Score";
+      submitBtn.className = "w-full bg-gradient-to-r from-pink-600 to-pink-500 text-white py-3 px-4 rounded-lg hover:from-pink-700 hover:to-pink-600 transition shadow-md font-medium flex items-center justify-center";
+      
+      const arrowIcon = document.createElement("svg");
+      arrowIcon.className = "ml-2 w-4 h-4";
+      arrowIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      arrowIcon.setAttribute("viewBox", "0 0 20 20");
+      arrowIcon.setAttribute("fill", "currentColor");
+      arrowIcon.innerHTML = `<path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />`;
+      
+      submitBtn.appendChild(arrowIcon);
+      submitDiv.appendChild(submitBtn);
+      form.appendChild(submitDiv);
+    };
+
+    // Calculate scores and show user info form
+    const calculateScores = () => {
+      let total = 0;
+      let answered = 0;
+      const answers = [];
+
+      for (let i = 1; i <= 10; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selected) {
+          const value = parseInt(selected.value);
+          total += value;
+          answered++;
+          answers.push(value);
+        }
+      }
+
+      if (answered < 10) {
+        alert("Please answer all questions before submitting.");
+        return null;
+      }
+
+      return {
+        totalScore: total,
+        percentage: Math.round((total / 50) * 100),
+        answers: answers
+      };
+    };
+
+    // Show user info form
+    const showUserInfoForm = () => {
+      const scores = calculateScores();
+      if (!scores) return;
+      
+      document.getElementById("scorecardForm").classList.add("hidden");
+      document.getElementById("userInfoForm").classList.remove("hidden");
+      document.getElementById("userInfoForm").scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Show results
+    const showResults = (scores) => {
+      document.getElementById("totalScore").textContent = `${scores.totalScore} / 50`;
+      document.getElementById("percentageScore").textContent = `${scores.percentage}%`;
+      document.getElementById("assessmentDate").textContent = new Date().toLocaleDateString();
+      
+      const interpretation = document.getElementById("interpretation");
+      interpretation.innerHTML = '';
+      
+      let resultText = '';
+      
+      if (scores.totalScore >= 40) {
+        resultText = `
+          <p class="font-medium">High Alignment (40-50)</p>
+          <p>High-performing team in sync. Stretch into innovation and culture shaping.</p>
+        `;
+      } else if (scores.totalScore >= 30) {
+        resultText = `
+          <p class="font-medium">Partial Alignment (30-39)</p>
+          <p>Partially aligned. Focus on one domain to realign.</p>
+        `;
+      } else if (scores.totalScore >= 20) {
+        resultText = `
+          <p class="font-medium">Functional but Fractured (20-29)</p>
+          <p>Functional but fractured. Recalibrate to prevent energy leakage.</p>
+        `;
+      } else {
+        resultText = `
+          <p class="font-medium">Significant Misalignment (Under 20)</p>
+          <p>Misalignment is costly. Consider an executive team reset.</p>
+        `;
+      }
+      
+      interpretation.innerHTML = resultText;
+      
+      document.getElementById("userInfoForm").classList.add("hidden");
+      document.getElementById("results").classList.remove("hidden");
+      document.getElementById("results").scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Submit responses to Google Apps Script
+    const submitResponses = async (e) => {
+      e.preventDefault();
+      
+      const scores = calculateScores();
+      if (!scores) return;
+      
+      const userName = document.getElementById("userName").value;
+      const userEmail = document.getElementById("userEmail").value;
+      const userOrganization = document.getElementById("userOrganization").value;
+      const userRole = document.getElementById("userRole").value;
+      
+      // Validate required fields
+      if (!userName || !userEmail) {
+        alert('Please fill in all required fields (name and email)');
+        return;
+      }
+      
+      try {
+        // Replace with your Google Apps Script Web App URL
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwtRI0aqc5geLIJdIjhLWc2zfyeqUS0CA8H08e9wYd5l-XL2qi-C4Z1FOBlfGCYAqkmaA/exec';
+        
+        const response = await fetch(scriptUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            timestamp: new Date().toISOString(),
+            name: userName,
+            email: userEmail,
+            organization: userOrganization || '',
+            role: userRole || '',
+            total_score: scores.totalScore,
+            percentage: scores.percentage,
+            answers: scores.answers.join(',')
+          }),
+        });
+        
+        showResults(scores);
+        
+      } catch (error) {
+        console.error('Error:', error);
+        // Even if there's an error, show results locally
+        showResults(scores);
+        alert('Your responses have been saved locally. There may have been an issue submitting to the server.');
+      }
+    };
+
+    const generatePDF = () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Set default font
+      doc.setFont("helvetica");
+      
+      // Colors
+      const primaryColor = [219, 39, 119]; // Pink
+      const darkColor = [31, 41, 55]; // Dark gray
+      const lightColor = [209, 213, 219]; // Light gray
+      
+      // Title
+      doc.setFontSize(20);
+      doc.setTextColor(...darkColor);
+      doc.setFont(undefined, 'bold');
+      doc.text("Executive Alignment Scorecard", 105, 25, { align: "center" });
+      
+      // Divider line
+      doc.setDrawColor(...lightColor);
+      doc.setLineWidth(0.5);
+      doc.line(20, 30, 190, 30);
+      
+      // User info section
+      const userName = document.getElementById("userName").value || 'Anonymous';
+      doc.setFontSize(12);
+      doc.setTextColor(...darkColor);
+      doc.setFont(undefined, 'normal');
+      doc.text(`Name: ${userName}`, 20, 45);
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 55);
+      
+      // Score section with colored box
+      const totalScore = document.getElementById("totalScore").textContent;
+      const percentage = document.getElementById("percentageScore").textContent;
+      doc.setFillColor(...primaryColor);
+      doc.roundedRect(20, 65, 170, 20, 3, 3, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(16);
+      doc.text(`Alignment Score: ${totalScore} (${percentage})`, 105, 78, { align: "center" });
+      
+      // Interpretation
+      const interpretation = document.getElementById("interpretation").textContent;
+      doc.setFontSize(12);
+      doc.setTextColor(...darkColor);
+      doc.text("Assessment Summary:", 20, 100);
+      
+      // Interpretation in bordered box
+      doc.setDrawColor(...lightColor);
+      doc.setFillColor(249, 250, 251); // Light gray background
+      doc.roundedRect(20, 105, 170, 30, 3, 3, 'FD');
+      doc.text(interpretation, 25, 115, { maxWidth: 160 });
+      
+      // Detailed Results header
+      doc.setFontSize(14);
+      doc.setTextColor(...primaryColor);
+      doc.setFont(undefined, 'bold');
+      doc.text("Detailed Results", 20, 145);
+      doc.setDrawColor(...primaryColor);
+      doc.line(20, 147, 50, 147);
+      
+      // Collect all answers
+      const answers = [];
+      for (let i = 1; i <= 10; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        answers.push(selected ? parseInt(selected.value) : 0);
+      }
+      
+      // Question-by-question results
+      let yPosition = 160;
+      let pageNumber = 1;
+      
+      questions.forEach((question, index) => {
+        // Check if we need a new page (leave 30mm at bottom)
+        if (yPosition > 250) {
+          doc.addPage();
+          pageNumber++;
+          yPosition = 20;
+          // Add header to new page
+          doc.setFontSize(10);
+          doc.setTextColor(100, 100, 100);
+          doc.text(`Executive Alignment Scorecard - Page ${pageNumber}`, 105, 10, { align: "center" });
+          doc.line(20, 15, 190, 15);
+          yPosition = 20;
+        }
+        
+        // Question text
+        doc.setFontSize(10);
+        doc.setTextColor(...darkColor);
+        doc.setFont(undefined, 'normal');
+        const questionLines = doc.splitTextToSize(`${index + 1}. ${question}`, 170);
+        
+        // Check if question fits on current page
+        const questionHeight = questionLines.length * 6;
+        if (yPosition + questionHeight > 270) {
+          doc.addPage();
+          pageNumber++;
+          yPosition = 20;
+          // Add header to new page
+          doc.setFontSize(10);
+          doc.setTextColor(100, 100, 100);
+          doc.text(`Executive Alignment Scorecard - Page ${pageNumber}`, 105, 10, { align: "center" });
+          doc.line(20, 15, 190, 15);
+        }
+        
+        doc.text(questionLines, 20, yPosition);
+        yPosition += questionHeight;
+        
+        // Rating
+        doc.text(`Rating: ${answers[index]}/5`, 25, yPosition);
+        yPosition += 10;
+      });
+      
+      // Footer
+      doc.setFontSize(8);
+      doc.setTextColor(100, 100, 100);
+      doc.text("Confidential - Created with Executive Alignment Scorecard", 105, 285, { align: "center" });
+      
+      // Save the PDF
+      doc.save(`Executive_Alignment_${userName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.pdf`);
+    };
+
+    // Restart assessment
+    const restartAssessment = () => {
+      document.getElementById("scorecardForm").reset();
+      document.getElementById("userInfoForm").reset();
+      document.getElementById("scorecardForm").classList.remove("hidden");
+      document.getElementById("userInfoForm").classList.add("hidden");
+      document.getElementById("results").classList.add("hidden");
+      renderQuestions();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Initialize the form
+    document.addEventListener("DOMContentLoaded", () => {
+      renderQuestions();
+      
+      document.getElementById("scorecardForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        showUserInfoForm();
+      });
+      
+      document.getElementById("userInfoForm").addEventListener("submit", submitResponses);
+      document.getElementById("downloadBtn").addEventListener("click", generatePDF);
+      document.getElementById("restartBtn").addEventListener("click", restartAssessment);
+    });
+  </script>
+</body>
+</html>
